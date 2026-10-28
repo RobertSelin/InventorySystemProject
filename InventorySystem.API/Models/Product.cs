@@ -13,6 +13,7 @@
         public Category Category { get; set; } = null!; // navigation property
 
         public ICollection<InventoryLog> Logs { get; set; } = new List<InventoryLog>();
-        public ICollection<Supplier> Suppliers { get; set; } = new List<Supplier>();
+        //public ICollection<Supplier> Suppliers { get; set; } = new List<Supplier>();
+        public ICollection<ProductSupplier> ProductSuppliers { get; set; } = new List<ProductSupplier>();
     }
 }
