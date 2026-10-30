@@ -1,4 +1,6 @@
 using InventorySystem.API.Data;
+using InventorySystem.API.Models;
+using InventorySystem.API.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +12,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Generic repository registration for any entity that does not need some specific custom queries
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
+// Specific repository registration for Product
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 var app = builder.Build();
 

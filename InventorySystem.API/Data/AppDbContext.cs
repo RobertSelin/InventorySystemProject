@@ -27,6 +27,7 @@ namespace InventorySystem.API.Data
                 e.Property(p => p.Name).HasMaxLength(200).IsRequired();
                 e.Property(p => p.SKU).HasMaxLength(50).IsRequired();
                 e.Property(p => p.Price).HasPrecision(18, 2);
+                e.Property(p => p.Barcode).HasMaxLength(50);
                 e.HasIndex(p => p.SKU).IsUnique();
 
                 e.HasOne(p => p.Category)
@@ -74,7 +75,11 @@ namespace InventorySystem.API.Data
             modelBuilder.Entity<Category>().HasData(
              new Category { Id = 1, Name = "Electronics", Description = "Devices and accessories" },
              new Category { Id = 2, Name = "Office Supplies", Description = "Paper, pens, folders" },
-             new Category { Id = 3, Name = "Furniture", Description = "Desks and chairs" });
+             new Category { Id = 3, Name = "Furniture", Description = "Desks and chairs" },
+             new Category { Id = 4, Name = "Hardware", Description = "Tools and building materials" },
+             new Category { Id = 5, Name = "Kitchenware", Description = "Appliances and ustensils" },
+             new Category { Id = 6, Name = "Stationery", Description = "Notebooks, envelopes and craft items" }
+            );
 
             modelBuilder.Entity<Product>().HasData(
               new Product

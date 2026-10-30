@@ -64,6 +64,24 @@ namespace InventorySystem.API.Migrations
                             Id = 3,
                             Description = "Desks and chairs",
                             Name = "Furniture"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Description = "Tools and building materials",
+                            Name = "Hardware"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Description = "Appliances and ustensils",
+                            Name = "Kitchenware"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Description = "Notebooks, envelopes and craft items",
+                            Name = "Stationery"
                         });
                 });
 
@@ -105,6 +123,10 @@ namespace InventorySystem.API.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Barcode")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
