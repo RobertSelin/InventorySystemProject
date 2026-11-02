@@ -1,6 +1,7 @@
 using InventorySystem.API.Data;
 using InventorySystem.API.Models;
 using InventorySystem.API.Repositories;
+using InventorySystem.API.Services.Product;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +19,8 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
 // Specific repository registration for Product
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
+builder.Services.AddScoped<IProductService, ProductService>();
 
 var app = builder.Build();
 
