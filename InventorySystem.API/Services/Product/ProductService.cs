@@ -1,4 +1,5 @@
-﻿using InventorySystem.API.DTOs.Products;
+﻿using InventorySystem.API.DTOs;
+using InventorySystem.API.DTOs.Products;
 using InventorySystem.API.Mapping;
 using InventorySystem.API.Models;
 using InventorySystem.API.Repositories;
@@ -87,5 +88,19 @@ namespace InventorySystem.API.Services.Product
             _productRepository.Remove(product);
             return await _productRepository.SaveChangesAsync();
         }
+
+        public async Task<PagedResult<ProductDto>> GetPaginatedAsync(string? search, int page, int pageSize)
+        {
+            var (items, totalCount) = await _productRepository.GetPaginatedAsync(search, page, pageSize);
+
+            return new PagedResult<ProductDto>
+            {
+                Items = items.Select(p => p.ToDto()),
+                TotalCount = totalCount,
+                Page = page,
+                PageSize = pageSize
+            };
+        }
+
     }
 }

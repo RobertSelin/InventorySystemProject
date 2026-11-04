@@ -6,20 +6,30 @@ namespace InventorySystem.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ProductController : ControllerBase
+    public class ProductsController : ControllerBase
     {
         private readonly IProductService _productService;
 
-        public ProductController(IProductService productService)
+        public ProductsController(IProductService productService)
         {
             _productService = productService;
         }
 
         // GET: api/products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetAll([FromQuery] string? search = null, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
-            var products = await _productService.GetAllAsync();
+            if(page < 1)
+            {
+                return BadRequest(new { message = "Page number must be greater than or equal to 1." });
+            }
+
+            if(pageSize < 1)
+            {
+                return BadRequest(new { message = "Page size must be greater than or equal to 1." });
+            }
+
+            var products = await _productService.GetPaginatedAsync(search, page, pageSize);
             return Ok(products);
         }
 

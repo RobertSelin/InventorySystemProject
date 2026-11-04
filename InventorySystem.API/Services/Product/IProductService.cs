@@ -1,4 +1,5 @@
-﻿using InventorySystem.API.DTOs.Products;
+﻿using InventorySystem.API.DTOs;
+using InventorySystem.API.DTOs.Products;
 
 namespace InventorySystem.API.Services.Product
 {
@@ -9,5 +10,6 @@ namespace InventorySystem.API.Services.Product
         Task<ProductDto> CreateAsync(CreateProductDto dto);
         Task<bool> UpdateAsync(int id, UpdateProductDto dto);
         Task<bool> DeleteAsync(int id);
+        Task<PagedResult<ProductDto>> GetPaginatedAsync(string? search, int page, int pageSize);
     }
 }
