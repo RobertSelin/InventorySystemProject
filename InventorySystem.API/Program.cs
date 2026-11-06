@@ -1,4 +1,5 @@
 using InventorySystem.API.Data;
+using InventorySystem.API.Exceptions;
 using InventorySystem.API.Models;
 using InventorySystem.API.Repositories;
 using InventorySystem.API.Services.Product;
@@ -22,6 +23,10 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 builder.Services.AddScoped<IProductService, ProductService>();
 
+// Registration for error exception handling
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -32,6 +37,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// here we enable the exception handler middleware
+app.UseExceptionHandler();
 
 app.UseAuthorization();
 

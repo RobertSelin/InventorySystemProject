@@ -48,5 +48,18 @@ namespace InventorySystem.API.Mapping
             product.Price = dto.Price;  
             product.CategoryId = dto.CategoryId;
         }
+
+        public static InventoryLogDto ToDto(this InventoryLog log)
+        {
+            return new InventoryLogDto
+            {
+                Id = log.Id,
+                ProductId = log.ProductId,
+                QuantityChange = log.QuantityChange,
+                NewQuantity = log.NewQuantity,
+                Reason  = log.Reason,
+                TimeStamp = log.Timestamp,
+            };
+        }
     }
 }

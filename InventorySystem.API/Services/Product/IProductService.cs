@@ -11,5 +11,7 @@ namespace InventorySystem.API.Services.Product
         Task<bool> UpdateAsync(int id, UpdateProductDto dto);
         Task<bool> DeleteAsync(int id);
         Task<PagedResult<ProductDto>> GetPaginatedAsync(string? search, int page, int pageSize);
+        Task<ProductDto> AdjustStockAsync(int id, StockAdjustmentDto dto);
+        Task<IEnumerable<InventoryLogDto>> GetStockHistoryAsync(int productId);
     }
 }

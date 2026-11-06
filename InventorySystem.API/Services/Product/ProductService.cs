@@ -1,5 +1,6 @@
 ﻿using InventorySystem.API.DTOs;
 using InventorySystem.API.DTOs.Products;
+using InventorySystem.API.Exceptions;
 using InventorySystem.API.Mapping;
 using InventorySystem.API.Models;
 using InventorySystem.API.Repositories;
@@ -11,11 +12,13 @@ namespace InventorySystem.API.Services.Product
     {
         private readonly IProductRepository _productRepository;
         private readonly IRepository<Category> _categoryRepository;
+        private readonly ILogger<ProductService> _logger;
 
-        public ProductService(IProductRepository productRepository, IRepository<Category> categoryRepository)
+        public ProductService(IProductRepository productRepository, IRepository<Category> categoryRepository, ILogger<ProductService> logger)
         {
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
+            _logger = logger;
         }
 
         // Get the list with all products
@@ -100,6 +103,63 @@ namespace InventorySystem.API.Services.Product
                 Page = page,
                 PageSize = pageSize
             };
+        }
+
+        public async Task<ProductDto> AdjustStockAsync(int id, StockAdjustmentDto dto)
+        {
+            if(dto.QuantityChange == 0)
+            {
+                throw new BusinessRuleException("Quantity change cannot be 0");
+            }
+
+            var product = await _productRepository.GetByIdWithDetailAsync(id);
+            if(product == null)
+            {
+                throw new NotFoundException($"Product with ID {id} was not found");
+            }
+
+            int previousStock = product.QuantityInStock;
+            int newStock = previousStock + dto.QuantityChange;
+
+            if(newStock < 0)
+            {
+                throw new BusinessRuleException($"Insufficient stock. Current stock is {previousStock}, cannot deduct {Math.Abs(dto.QuantityChange)} items.");
+            }
+
+            _logger.LogInformation("Adjusting stock for Product ID {ProductId} ({ProductName}). Change: {Change}, Previous:{PreviousStock}, New: { NewStock}", product.Id, product.Name, dto.QuantityChange, previousStock, newStock);
+
+            product.QuantityInStock = newStock;
+
+            var log = new InventoryLog
+            {
+                ProductId = product.Id,
+                QuantityChange = dto.QuantityChange,
+                NewQuantity = newStock,
+                Reason = dto.Reason,
+                Timestamp = DateTime.UtcNow
+            };
+
+            product.Logs.Add(log);
+
+            _productRepository.Update(product);
+
+            await _productRepository.SaveChangesAsync();
+
+            _logger.LogInformation("Stock adjustment completed successfully for Product ID {ProductId}.", product.Id);
+
+            return product.ToDto();
+        }
+
+        public async Task<IEnumerable<InventoryLogDto>> GetStockHistoryAsync(int productId)
+        {
+            var product = await _productRepository.GetByIdAsync(productId);
+            if(product == null)
+            {
+                throw new NotFoundException($"Product with ID {productId} was not found.");
+            }
+
+            var logs = await _productRepository.GetStockHistoryAsync(productId);
+            return logs.Select(l => l.ToDto());
         }
 
     }

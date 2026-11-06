@@ -8,5 +8,6 @@ namespace InventorySystem.API.Repositories
         Task<Product?> GetByIdWithDetailAsync(int id);
         Task<IEnumerable<Product>> GetLowStockAsync(int threshold);
         Task<(IEnumerable<Product> Items, int TotalCount)> GetPaginatedAsync(string? search, int page, int pageSize);
+        Task<IEnumerable<InventoryLog>> GetStockHistoryAsync(int productId);
     }
 }

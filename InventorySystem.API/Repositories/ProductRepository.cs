@@ -49,5 +49,13 @@ namespace InventorySystem.API.Repositories
             return (items, totalCount);
 
         }
+
+        public async Task<IEnumerable<InventoryLog>> GetStockHistoryAsync(int productId)
+        {
+            return await _context.InventoryLogs
+                .Where(p => p.ProductId == productId)
+                .OrderByDescending(p => p.Id)
+                .ToListAsync();
+        }
     }
 }
