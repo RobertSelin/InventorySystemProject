@@ -1,6 +1,47 @@
 @InventorySystem.API_HostAddress = http://localhost:5290
 
 GET {{InventorySystem.API_HostAddress}}/weatherforecast/
+
+### 1. Get PaginatedProducts
+GET {{InventorySystem.API_HostAddress}}/api/products?page=1&pageSize=10
+Accept: application/json
+
+### 2. Get Product By ID
+GET {{InventorySystem.API_HostAddress}}/api/products/1 
+Accept: application/json
+
+### 3. Create Product
+POST {{InventorySystem.API_HostAddress}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Wireless Mechanical Keyboard",
+  "sku": "KEY-WL-001",
+  "price": 129.99,
+  "quantityInStock": 25,
+  "categoryId": 1
+}
+
+### 4. Adjust Stock (Restock +10)
+POST {{InventorySystem.API_HostAddress}}/api/products/1/stock
+Content-Type: application/json
+
+{
+  "quantityChange": 10,
+  "reason": "Shipment PO-4481 Received"
+}
+
+### 5. Adjust Stock (Negative stock test - Expect 400 ProblemDetails)
+POST {{InventorySystem.API_HostAddress}}/api/products/1/stock
+Content-Type: application/json
+
+{
+  "quantityChange": -9999,
+  "reason": "Accidental bulk write-off"
+}
+
+### 6. Get Product Stock History
+GET {{InventorySystem.API_HostAddress}}/api/products/1/history
 Accept: application/json
 
 ###
