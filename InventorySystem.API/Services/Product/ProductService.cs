@@ -32,6 +32,12 @@ namespace InventorySystem.API.Services.Product
         public async Task<ProductDto?> GetByIdAsync(int id)
         {
             var product = await _productRepository.GetByIdWithDetailAsync(id);
+
+            if(product == null)
+            {
+                throw new NotFoundException($"Product with ID {id} was not found");
+            }
+
             return product?.ToDto();
         }
 
@@ -43,7 +49,7 @@ namespace InventorySystem.API.Services.Product
 
             if(category == null)
             {
-                throw new ArgumentException($"Category with ID {dto.CategoryId} does not exist");
+                throw new NotFoundException($"Category with ID {dto.CategoryId} does not exist");
             }
 
             // We create and save the new product
@@ -70,7 +76,7 @@ namespace InventorySystem.API.Services.Product
                 var category = await _categoryRepository.GetByIdAsync(dto.CategoryId);
                 if (category == null)
                 {
-                    throw new ArgumentException($"Category with Id {dto.CategoryId} does not exist.");
+                    throw new NotFoundException($"Category with Id {dto.CategoryId} does not exist.");
                 }
             }
 
