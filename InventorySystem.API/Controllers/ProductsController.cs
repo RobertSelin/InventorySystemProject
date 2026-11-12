@@ -126,5 +126,17 @@ namespace InventorySystem.API.Controllers
             var history = await _productService.GetStockHistoryAsync(id);
             return Ok(history);
         }
+
+        // GET: api/products/low-stock?threshold=10
+        /// <summary>
+        /// Retrieves products whose inventory is lower than or equal to the given threshold.
+        /// </summary>
+        [HttpGet("low-stock")]
+        [ProducesResponseType(typeof(IEnumerable<ProductDto>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<ProductDto>>> LowStock([FromQuery] int threshold = 10)
+        {
+            var items = await _productService.GetLowStockAsync(threshold);
+            return Ok(items);
+        }
     }
 }

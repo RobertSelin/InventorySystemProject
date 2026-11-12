@@ -1,0 +1,101 @@
+﻿@model ProductViewModel
+
+@{
+    ViewData["Title"] = "Product Details";
+    var history = ViewBag.History as IEnumerable<InventoryLogViewModel> ??
+    Enumerable.Empty<InventoryLogViewModel>();
+}
+
+<div class="mb-3">
+    <a asp-action="Index" class="btn btn-outline-secondary">&larr; Back to Products</a>
+    <a asp-action="AdjustStock" asp-route-id="@Model.Id" class="btn btn-warning">Adjust Stock</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit Product</a>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white">
+                <h4 class="mb-0">@Model.Name</h4>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-4">ID</dt>
+                    <dd class="col-sm-8">@Model.Id</dd>
+
+                    <dt class="col-sm-4">SKU</dt>
+                    <dd class="col-sm-8"><code>@Model.SKU</code></dd>
+
+                    <dt class="col-sm-4">Barcode</dt>
+                    <dd class="col-sm-8">@(Model.BarCode ?? "N/A")</dd>
+
+                    <dt class="col-sm-4">Category</dt>
+                    <dd class="col-sm-8">@Model.CategoryName (ID: @Model.CategoryId)</dd>
+
+                    <dt class="col-sm-4">Price</dt>
+                    <dd class="col-sm-8"><strong>@Model.Price.ToString("C")</strong></dd>
+
+                    <dt class="col-sm-4">In Stock</dt>
+                    <dd class="col-sm-8">
+                        <span class="badge @(Model.QuantityInStock > 10 ? "bg-success" :
+                                                          Model.QuantityInStock > 0 ? "bg-warning text-dark" : "bg-danger") fs-6">
+                            @Model.QuantityInStock units
+                        </span>
+                    </dd>
+
+                    <dt class="col-sm-4">Created Date</dt>
+                    <dd class="col-sm-8">@Model.CreatedDate.ToLocalTime().ToString("g")</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">Stock Adjustment Audit History</h5>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-sm table-striped mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Date</th>
+                            <th>Change</th>
+                            <th>New Stock</th>
+                            <th>Reason</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (history.Any())
+                        {
+                            @foreach (var log in history.OrderByDescending(h => h.TimeStamp))
+                            {
+                                <tr>
+                                    <td>@log.TimeStamp?.ToLocalTime().ToString("g")</td>
+                                    <td>
+                                        <span class="badge @(log.QuantityChange > 0 ? "bg-success" :
+                                                                                          "bg-danger")">
+                                            @(log.QuantityChange > 0 ? $"+{log.QuantityChange}" :
+                                                                                log.QuantityChange.ToString())
+                                </span>
+                            </td>
+                            <td>@log.NewQuantity</td>
+                            <td>@log.Reason</td>
+                        </tr>
+                                                }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center text-muted py-3">
+                                    No stock adjustments
+                                    recorded.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

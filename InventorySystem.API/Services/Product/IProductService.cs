@@ -13,5 +13,6 @@ namespace InventorySystem.API.Services.Product
         Task<PagedResult<ProductDto>> GetPaginatedAsync(string? search, int page, int pageSize);
         Task<ProductDto> AdjustStockAsync(int id, StockAdjustmentDto dto);
         Task<IEnumerable<InventoryLogDto>> GetStockHistoryAsync(int productId);
+        Task<IEnumerable<ProductDto>> GetLowStockAsync(int thereshold = 10);
     }
 }

@@ -7,7 +7,8 @@ builder.Services.AddControllersWithViews();
 
 var apiBaseUrl = builder.Configuration["ApiSettings:BaseUrl"] ?? throw new InvalidOperationException("ApiSettings:BaseUrl is not configured.");
 
-builder.Services.AddHttpClient<ProductApiClient>(client =>
+// Register the ProductApi 
+builder.Services.AddHttpClient<IProductApiClientService, ProductApiClient>(client =>
 {
     client.BaseAddress = new Uri(apiBaseUrl);
     client.DefaultRequestHeaders.Add("Accept", "application/json");

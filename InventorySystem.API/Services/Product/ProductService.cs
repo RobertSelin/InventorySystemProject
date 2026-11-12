@@ -168,5 +168,15 @@ namespace InventorySystem.API.Services.Product
             return logs.Select(l => l.ToDto());
         }
 
+        public async Task<IEnumerable<ProductDto>> GetLowStockAsync(int threshold = 10)
+        {
+            var product = await _productRepository.GetLowStockAsync(threshold);
+            if(product == null)
+            {
+                throw new NotFoundException("No product with low stock found.");
+            }
+
+            return product.Select(p => p.ToDto());
+        }
     }
 }

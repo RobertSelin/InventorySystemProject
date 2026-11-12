@@ -1,0 +1,58 @@
+﻿@model StockAdjustmentViewModel
+
+@{
+    ViewData["Title"] = "Adjust Stock";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0">Adjust Stock: @Model.ProductName</h4>
+            </div>
+            <div class="card-body">
+                <p>
+                    <strong>Current In Stock:</strong> <span class="badge bg-secondary
+                    fs-6">@Model.CurrentStock</span>
+                </p>
+
+                <!-- RFC 7807 ProblemDetails from API will show up here -->
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <form asp-action="AdjustStock" method="post">
+                    <input type="hidden" asp-for="ProductId" />
+                    <input type="hidden" asp-for="ProductName" />
+                    <input type="hidden" asp-for="CurrentStock" />
+
+                    <div class="mb-3">
+                        <label asp-for="QuantityChange" class="form-label">Quantity Change</label>
+                        <input asp-for="QuantityChange" class="form-control" placeholder="e.g. +10
+                            (restock) or -3 (sold)" />
+                        <span asp-validation-for="QuantityChange" class="text-danger"></span>
+                        <div class="form-text">
+                            Use positive numbers to add stock, negative numbers to
+                            deduct.
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Reason" class="form-label">Reason for Audit Log</label>
+                        <input asp-for="Reason" class="form-control" placeholder="e.g. Shipment received
+                            #401, Sold, Damaged" />
+                        <span asp-validation-for="Reason" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="Details" asp-route-id="@Model.ProductId" class="btn
+                            btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-warning">Apply Adjustment</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
