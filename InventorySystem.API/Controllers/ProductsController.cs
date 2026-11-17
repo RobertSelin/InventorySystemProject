@@ -1,6 +1,7 @@
 ﻿using InventorySystem.API.DTOs;
 using InventorySystem.API.DTOs.Products;
 using InventorySystem.API.Services.Product;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -55,6 +56,7 @@ namespace InventorySystem.API.Controllers
         /// <param name="dto">The product creation payload.</param>
         /// <returns>The newly created product.</returns>
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(ProductDto), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ProductDto>> Create(CreateProductDto dto)
@@ -72,6 +74,7 @@ namespace InventorySystem.API.Controllers
         /// <param name="id">The ID of the product to update.</param>
         /// <param name="dto">The updated product payload.</param>
         [HttpPut("{id:int}")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(ProductDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
@@ -87,6 +90,7 @@ namespace InventorySystem.API.Controllers
         /// </summary>
         /// <param name="id">The ID of the product to delete.</param>
         [HttpDelete("{id:int}")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(ProductDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(int id)
@@ -103,6 +107,7 @@ namespace InventorySystem.API.Controllers
         /// <param name="dto">The stock adjustment payload with delta change and reason.</param>
         /// <returns>The updated product with new stock level.</returns>
         [HttpPost("{id:int}/stock")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(ProductDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]

@@ -12,6 +12,7 @@ namespace InventorySystem.API.Data
         public DbSet<InventoryLog> InventoryLogs => Set<InventoryLog>();
         public DbSet<Supplier> Suppliers => Set<Supplier>();
         public DbSet<ProductSupplier> ProductSuppliers => Set<ProductSupplier>();
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -82,36 +83,90 @@ namespace InventorySystem.API.Data
             );
 
             modelBuilder.Entity<Product>().HasData(
-              new Product
-              {
-                  Id = 1,
-                  Name = "Laptop 15\"",
-                  SKU = "ELE-001",
-                  Price = 3499.99m,
-                  QuantityInStock = 12,
-                  CategoryId = 1,
-                  CreateDate = new DateTime(2026, 1, 1)
-              },
-              new Product
-              {
-                  Id = 2,
-                  Name = "Wireless Mouse",
-                  SKU = "ELE-002",
-                  Price = 79.90m,
-                  QuantityInStock = 40,
-                  CategoryId = 1,
-                  CreateDate = new DateTime(2026, 1, 1)
-              },
-              new Product
-              {
-                  Id = 3,
-                  Name = "A4 Paper (500)",
-                  SKU = "OFF-001",
-                  Price = 24.50m,
-                  QuantityInStock = 5,
-                  CategoryId = 2,
-                  CreateDate = new DateTime(2026, 1, 1)
-              });
+                new Product
+                {
+                    Id = 1,
+                    Name = "Laptop 15\"",
+                    SKU = "ELE-001",
+                    Price = 3499.99m,
+                    QuantityInStock = 12,
+                    CategoryId = 1,
+                    CreateDate = new DateTime(2026, 1, 1)
+                },
+                new Product
+                {
+                    Id = 2,
+                    Name = "Wireless Mouse",
+                    SKU = "ELE-002",
+                    Price = 79.90m,
+                    QuantityInStock = 40,
+                    CategoryId = 1,
+                    CreateDate = new DateTime(2026, 1, 1)
+                },
+                new Product
+                {
+                    Id = 3,
+                    Name = "A4 Paper (500)",
+                    SKU = "OFF-001",
+                    Price = 24.50m,
+                    QuantityInStock = 5,
+                    CategoryId = 2,
+                    CreateDate = new DateTime(2026, 1, 1)
+                }
+            );
+
+            // Register User Db
+            modelBuilder.Entity<User>(e =>
+            {
+                e.HasKey(u => u.Id);
+
+                e.Property(u => u.Username)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                e.HasIndex(u => u.Username)
+                    .IsUnique();
+
+                e.Property(u => u.Email)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                e.HasIndex(u => u.Email)
+                    .IsUnique();
+
+                e.Property(u => u.PasswordHash)
+                    .IsRequired();
+
+                e.Property(u => u.Role)
+                    .IsRequired()
+                    .HasMaxLength(50);
+            });
+
+            // Seed users
+
+            var hasher = new Microsoft.AspNetCore.Identity.PasswordHasher<User>();
+
+            var adminUser = new User
+            {
+                Id = 1,
+                Username = "admin",
+                Email = "admin@mailcatch.com",
+                Role = "Admin",
+                CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+            };
+            adminUser.PasswordHash = hasher.HashPassword(adminUser, "111111");
+
+            var viewerUser = new User
+            {
+                Id = 2,
+                Username = "viewer",
+                Email = "viewer@mailcatch.com",
+                Role = "Viewer",
+                CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+            };
+            viewerUser.PasswordHash = hasher.HashPassword(viewerUser, "111111");
+
+            modelBuilder.Entity<User>().HasData(adminUser, viewerUser);
         }
     }
 }

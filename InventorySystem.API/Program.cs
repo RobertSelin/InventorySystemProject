@@ -5,6 +5,12 @@ using InventorySystem.API.Repositories;
 using InventorySystem.API.Services.Product;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Identity;
+using InventorySystem.API.Services.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +21,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen( options =>
 {
-    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    options.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "Inventory Management API",
         Version = "v1",
@@ -25,7 +31,35 @@ builder.Services.AddSwaggerGen( options =>
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     options.IncludeXmlComments(xmlPath);
+
+    // Define the bearer security scheme in Swagger 
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter your JWT token in the text below. \r\nExample: ehruiehbcvievnoy732vreSDSCNere3435gvrteb..."
+    });
+
+    // Make all endpoints require Bearer token if decorated with [Authorize]
+    options.AddSecurityRequirement( new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme 
+            { 
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }    
+    });
 });
+
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Generic repository registration for any entity that does not need some specific custom queries
@@ -35,6 +69,13 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 builder.Services.AddScoped<IProductService, ProductService>();
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+// Register the password hasher for secure cryptographic hashing
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
 // Registration for error exception handling
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -55,6 +96,33 @@ builder.Services.AddCors(options =>
     });
 });
 
+// JWT Auth Registration
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]!);
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateIssuer = true,
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidateAudience = true,
+        ValidAudience = jwtSettings["Audience"],
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero // Eliminates the default 5 minute clock drift grace period
+    };
+});
+
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -72,7 +140,8 @@ app.UseExceptionHandler();
 // Add cors middleware 
 app.UseCors(corsPolicy);
 
-app.UseAuthorization();
+app.UseAuthentication(); // 1. Who are you (validates token & creates ClaimsPrincipal)
+app.UseAuthorization(); // 2. Are you allowed in? (check Roles/Policies)
 
 app.MapControllers();
 

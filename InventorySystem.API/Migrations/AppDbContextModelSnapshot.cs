@@ -241,6 +241,67 @@ namespace InventorySystem.API.Migrations
                         });
                 });
 
+            modelBuilder.Entity("InventorySystem.API.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("Username")
+                        .IsUnique();
+
+                    b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "admin@mailcatch.com",
+                            PasswordHash = "AQAAAAIAAYagAAAAEHaWq+W3VqI8AFovOZ43dIA8cMoeoIJ39Vj/g0TjsBjcQmBYChExFJrt6iHTa+wngw==",
+                            Role = "Admin",
+                            Username = "admin"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "viewer@mailcatch.com",
+                            PasswordHash = "AQAAAAIAAYagAAAAEIaY2xFicUu8Oi88QkCVVAtKRarhGbgq5UGzL7kcFWZ+xWjtuj+gn0SuIA10IwTslw==",
+                            Role = "Viewer",
+                            Username = "viewer"
+                        });
+                });
+
             modelBuilder.Entity("InventorySystem.API.Models.InventoryLog", b =>
                 {
                     b.HasOne("InventorySystem.API.Models.Product", "Product")
