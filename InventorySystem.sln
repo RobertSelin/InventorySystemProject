@@ -1,11 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.37824.6 d17.14
+VisualStudioVersion = 17.14.37824.6
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InventorySystem.API", "InventorySystem.API\InventorySystem.API.csproj", "{9FA7389C-EC1F-45D5-85D0-6EC439CEB73E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InventorySystem.Web", "InventorySystem.Web\InventorySystem.Web.csproj", "{2FAE27AE-973F-4AD6-962C-376167EAD90F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InventorySystem.Tests", "InventorySystem.Tests\InventorySystem.Tests.csproj", "{31085CC7-2439-4DF9-8A69-1BACB4B835AA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9FA7389C-EC1F-45D5-85D0-6EC439CEB73E} = {9FA7389C-EC1F-45D5-85D0-6EC439CEB73E}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +26,10 @@ Global
 		{2FAE27AE-973F-4AD6-962C-376167EAD90F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FAE27AE-973F-4AD6-962C-376167EAD90F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2FAE27AE-973F-4AD6-962C-376167EAD90F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31085CC7-2439-4DF9-8A69-1BACB4B835AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31085CC7-2439-4DF9-8A69-1BACB4B835AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31085CC7-2439-4DF9-8A69-1BACB4B835AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31085CC7-2439-4DF9-8A69-1BACB4B835AA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

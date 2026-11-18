@@ -12,6 +12,18 @@ builder.Services.AddHttpClient<IProductApiClientService, ProductApiClient>(clien
 {
     client.BaseAddress = new Uri(apiBaseUrl);
     client.DefaultRequestHeaders.Add("Accept", "application/json");
+}).AddStandardResilienceHandler(options =>
+{
+    // 1. Configure Retry Strategy
+    options.Retry.MaxRetryAttempts = 3; // Max 3 retries of a request
+    options.Retry.BackoffType = Polly.DelayBackoffType.Exponential; // 2s, 4s, 8s...
+    options.Retry.UseJitter = true; // Ads random miliseconds to prevent "thundering herd"
+
+    // 2. Configure Individual Attempt timeout
+    options.AttemptTimeout.Timeout = TimeSpan.FromSeconds(5); // each attempt can take up to 5 seconds
+
+    // 3. Configure total request timeout
+    options.TotalRequestTimeout.Timeout = TimeSpan.FromSeconds(30);
 });
 
 var app = builder.Build();

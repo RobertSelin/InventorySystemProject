@@ -96,10 +96,14 @@ namespace InventorySystem.API.Services.Auth
 
         private (string token, DateTime expiresAt) GenerateJwtToken(User user)
         {
+            // 1. Retrieve jwt configuration settings
+
             var jwtSettings = _configuration.GetSection("Jwt");
             var secretKey = Encoding.UTF8.GetBytes(jwtSettings["Key"]!);
             var expiryMinutes = int.Parse(jwtSettings["ExpiryMinutes"] ?? "60");
             var expiresAt = DateTime.UtcNow.AddMinutes(expiryMinutes);
+
+            // 2. Build the claims
 
             var claims = new[]
             {
