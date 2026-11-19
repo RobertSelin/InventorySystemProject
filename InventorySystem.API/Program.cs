@@ -146,3 +146,6 @@ app.UseAuthorization(); // 2. Are you allowed in? (check Roles/Policies)
 app.MapControllers();
 
 app.Run();
+
+// For integration tests
+public partial class Program { }
