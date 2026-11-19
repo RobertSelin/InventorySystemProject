@@ -484,6 +484,6 @@ $RECYCLE.BIN/
 *.swp
 
 # Local Environment Configuration & Secrets 
-**/appsetings.Development.json
-**/appsetings.Production.json
-**/appsetings.Local.json
+**/appsettings.Development.json
+**/appsettings.Production.json
+**/appsettings.Local.json
