@@ -1,6 +1,7 @@
 ﻿using InventorySystem.API.DTOs.Auth;
 using InventorySystem.API.Services.Auth;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace InventorySystem.API.Controllers
 {
@@ -22,6 +23,7 @@ namespace InventorySystem.API.Controllers
         [HttpPost("register")]
         [ProducesResponseType(typeof(UserResponseDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [EnableRateLimiting("ip-fixed")]
         public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {
             var result = await _authService.RegisterAsync(dto);
@@ -31,6 +33,7 @@ namespace InventorySystem.API.Controllers
         [HttpPost("login")]
         [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [EnableRateLimiting("ip-fixed")]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
             var result = await _authService.LoginAsync(dto);

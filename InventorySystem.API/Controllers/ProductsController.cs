@@ -4,6 +4,7 @@ using InventorySystem.API.Services.Product;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace InventorySystem.API.Controllers
 {
@@ -28,6 +29,7 @@ namespace InventorySystem.API.Controllers
         /// <returns>A paginated result containing products and metadata.</returns>
         [HttpGet]
         [ProducesResponseType(typeof(PagedResult<ProductDto>), StatusCodes.Status200OK)]
+        [EnableRateLimiting("ip-fixed")]
         public async Task<ActionResult<PagedResult<ProductDto>>> GetAll([FromQuery] string? search = null, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
             var products = await _productService.GetPaginatedAsync(search, page, pageSize);
@@ -59,6 +61,7 @@ namespace InventorySystem.API.Controllers
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(ProductDto), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [EnableRateLimiting("ip-fixed")]
         public async Task<ActionResult<ProductDto>> Create(CreateProductDto dto)
         {
             var createProduct = await _productService.CreateAsync(dto);
@@ -78,6 +81,7 @@ namespace InventorySystem.API.Controllers
         [ProducesResponseType(typeof(ProductDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [EnableRateLimiting("ip-fixed")]
         public async Task<IActionResult> Update(int id, UpdateProductDto dto)
         {
             var updatedProduct = await _productService.UpdateAsync(id, dto);
@@ -93,6 +97,7 @@ namespace InventorySystem.API.Controllers
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(ProductDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [EnableRateLimiting("ip-fixed")]
         public async Task<IActionResult> Delete(int id)
         {
             var deletedProduct = await _productService.DeleteAsync(id);
@@ -111,6 +116,7 @@ namespace InventorySystem.API.Controllers
         [ProducesResponseType(typeof(ProductDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [EnableRateLimiting("ip-fixed")]
         public async Task<ActionResult<ProductDto>> AdjustStock(int id, [FromBody] StockAdjustmentDto dto)
         {
             var updateStock = await _productService.AdjustStockAsync(id, dto);
